@@ -1,11 +1,9 @@
-package com.studentmanagementsystem.repository;
-
-import java.util.List;
+package com.employeemanagementsystem.repository.employee;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.studentmanagementsystem.model.Employee;
+import com.employeemanagementsystem.model.employee.Employee;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long>{

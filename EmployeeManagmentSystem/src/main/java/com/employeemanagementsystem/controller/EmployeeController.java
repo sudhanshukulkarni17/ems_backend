@@ -1,9 +1,12 @@
-package com.studentmanagementsystem.controller;
+package com.employeemanagementsystem.controller;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.employeemanagementsystem.model.book.Book;
+import com.employeemanagementsystem.repository.book.BookRepository;
+import com.employeemanagementsystem.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.studentmanagementsystem.exception.ResourceNotFoundException;
-import com.studentmanagementsystem.model.Employee;
-import com.studentmanagementsystem.repository.EmployeeRepository;
+import com.employeemanagementsystem.exception.ResourceNotFoundException;
+import com.employeemanagementsystem.model.employee.Employee;
+import com.employeemanagementsystem.repository.employee.EmployeeRepository;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -27,20 +30,27 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
+
+	@Autowired
+	private BookRepository bookRepository;
+
+	@Autowired
+	private EmployeeService employeeService;
+
 	
 	
 	//get all the employees
 	@GetMapping("/employees")
 	public List<Employee> getAllEmployees()
 	{
-		return employeeRepository.findAll();
+		return employeeService.getAllEmployees();
 	}
 	
 	//create employee
 	@PostMapping("/createEmployee")
 	public Employee createEmployee(@RequestBody Employee employee) 
 	{
-			return employeeRepository.save(employee);
+			return employeeService.createEmployee(employee);
 	}
 	
 	//get employee by id
@@ -48,22 +58,14 @@ public class EmployeeController {
 	public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
 		
 		Employee employee= employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee with this id is not found: " + id));
-		return ResponseEntity.ok(employee);
+		return ResponseEntity.ok(employeeService.getEmployeeById(id));
 	}
 	
 	//update employee
 	@PutMapping("/employees/{id}")
 	public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employeeDetails){
-		
 		Employee employee= employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee with this id is not found: " + id));
-		
-		System.out.println(employeeDetails.toString());
-		employee.setEmailId(employeeDetails.getEmailId());
-		employee.setFirstname(employeeDetails.getFirstname());
-		employee.setLastname(employeeDetails.getLastname());
-		Employee updateEmployee = employeeRepository.save(employee);
-		return ResponseEntity.ok(updateEmployee);
-		
+		return ResponseEntity.ok(employeeService.updateEmployee(id, employeeDetails));
 	}
 	
 	//delete the employees 
@@ -76,20 +78,30 @@ public class EmployeeController {
 		employeeRepository.delete(employee);
 		Map<String, Boolean> response = new HashMap<>();
 		response.put("deleted", Boolean.TRUE);
-		
 		return ResponseEntity.ok(response);
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	@GetMapping("/getBooks")
+	public List<Book> getBooks(){
+		return bookRepository.findAll();
+	}
+
+	@GetMapping("/getEmployees")
+	public List<Employee> getEmployees(){
+		return employeeRepository.findAll();
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
